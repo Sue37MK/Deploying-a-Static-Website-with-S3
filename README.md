@@ -23,23 +23,46 @@ This project demonstrates how to host a static website on AWS S3 using Terraform
 ### 1. Create the S3 Bucket
 Create an S3 bucket to host the website. Ensure it has a globally unique name.
 
+```hcl
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+resource "aws_s3_bucket" "static_website" {
+  bucket = "terraform-course-project-1-${random_id.bucket_suffix.hex}"
+}
+```
+
 ### 2. Disable Public Access Block
 Update the bucket settings to disable public access block, allowing access via the internet.
+```hcl
+resource "aws_s3_bucket_public_access_block" "static_website" {
+  bucket                  = aws_s3_bucket.static_website.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+```
 
 ### 3. Apply a Bucket Policy
 Define a bucket policy that grants `s3:GetObject` permissions to allow public read access for all objects within the bucket. Example policy:
 
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::your-bucket-name/*"
-    }
-  ]
+```hcl
+resource "aws_s3_bucket_policy" "static_website_public_read" {
+  bucket = aws_s3_bucket.static_website.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.static_website.arn}/*"
+      }
+    ]
+  })
 }
 ```
 
