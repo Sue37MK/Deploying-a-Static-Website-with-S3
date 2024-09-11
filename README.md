@@ -1,4 +1,4 @@
-
+![Alt text](static_website.png)
 
 ---
 
@@ -160,5 +160,5 @@ terraform output static_website_endpoint
 ```
 
 Visit the URL in your browser to confirm the static website is running.
-
 ---
+![Alt text](url.png)
