@@ -1,4 +1,4 @@
-Here’s a sample README file for your project on deploying a static website with Terraform on an S3 bucket:
+
 
 ---
 
